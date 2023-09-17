@@ -41,8 +41,13 @@ print("Mean = " + str(mean) +"\n"+ "SD = " + str(sd))
 #%%
 filename = 'LifeExpectancyData.csv'
 df = pd.read_csv(filename)
+df.drop(columns = ["Country", "Year", "Status"], inplace = True)
+print(df.head())
+
 df.fillna(df.mean(), inplace=True) # Fills the columns with nan values with the mean of that column
 
+print(df)
+#%%
 #One problem with this method, is can be very inaccurate for some countries. 
 #For example it says Antigua and Barbuda has a popluation of 10 million when
 #it is actually 90,000
