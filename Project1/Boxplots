@@ -1,0 +1,32 @@
+#%%
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load in the data
+file = 'StandardizedDataFrameWithNansFilled.csv'
+data = pd.read_csv(file)
+
+# Determine the number of rows and columns for the grid of box plots
+num_columns = len(data.columns)
+print(len(data.columns))
+num_cols_per_row = 5  # Number of box plots per row
+num_rows = 4
+
+# Create a figure with a grid layout
+fig, axs = plt.subplots(num_rows, num_cols_per_row, figsize=(32, 4),dpi=300)  # Adjust the figure size as needed
+
+# Create box plots for each numeric column
+for i, c in enumerate(data.columns):
+    if data[c].dtype in ['int64', 'float64']:
+        ax = axs[i]
+        ax.boxplot(data[c])
+        ax.set_title(f'Box Plot of {c}')
+        ax.set_ylabel(c)
+
+# Adjust the layout to prevent overlapping titles
+plt.tight_layout()
+
+# Show the combined figure with all box plots
+plt.show()
+
+# %%
