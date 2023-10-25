@@ -6,15 +6,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 file = '/Users/eiadjoudeh/Documents/GitHub/DTU_MachineLearning/Project1/StandardizedDataFrameWithNansFilled.csv'
-#Y_file = '/Users/eiadjoudeh/Documents/GitHub/DTU_MachineLearning/Project1/Life Expectancy Data With Dropped Rows.csv'
-
 data = pd.read_csv(file)
 
-data['Status'] = data['Status'].map({'Developed': 0, 'Developing': 1})
+data['Status'] = data['Status'].map({'Developed': 1, 'Developing': 0})
 y = data['Status'].values
 y=y.T
 X = data.loc[:, 'Adult Mortality':'Schooling'].values
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.95, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.10, random_state=42)
 
 lambda_interval = np.logspace(-8, 2, 50)
 train_error_rate = np.zeros(len(lambda_interval))
@@ -22,7 +20,7 @@ test_error_rate = np.zeros(len(lambda_interval))
 coefficient_norm = np.zeros(len(lambda_interval))
 
 for k in range(0, len(lambda_interval)):
-    logistic_regression_model = LogisticRegression(penalty='l2', C=1/lambda_interval[k])
+    logistic_regression_model = LogisticRegression(C=1/lambda_interval[k])
     logistic_regression_model.fit(X_train, y_train)
 
     y_train_est = logistic_regression_model.predict(X_train).T
@@ -42,6 +40,10 @@ plt.figure(figsize=(8,8))
 #plt.plot(np.log10(lambda_interval), train_error_rate*100)
 #plt.plot(np.log10(lambda_interval), test_error_rate*100)
 #plt.plot(np.log10(opt_lambda), min_error*100, 'o')
+
+print(train_error_rate*100)
+print(test_error_rate*100)
+
 plt.semilogx(lambda_interval, train_error_rate*100)
 plt.semilogx(lambda_interval, test_error_rate*100)
 plt.semilogx(opt_lambda, min_error*100, 'o')
@@ -50,7 +52,7 @@ plt.xlabel('Regularization strength, $\log_{10}(\lambda)$')
 plt.ylabel('Error rate (%)')
 plt.title('Classification error')
 plt.legend(['Training error','Test error','Test minimum'],loc='upper right')
-plt.ylim([0, 4])
+# plt.ylim([0, 4])
 plt.grid()
 plt.show()    
 
@@ -62,13 +64,14 @@ plt.title('Parameter vector L2 norm')
 plt.grid()
 plt.show()    
 
-print('Yall ever wore your underwear inside out?')
 
-#accuracy = accuracy_score(y_test, y_pred)
+#Pick y_pred from best set
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy}")
+
 #precision = precision_score(y_test, y_pred)
 #recall = recall_score(y_test, y_pred)
 #f1 = f1_score(y_test, y_pred)
-#print(f"Accuracy: {accuracy}")
 #print(f"Precision: {precision}")
 #print(f"Recall: {recall}")
 #print(f"F1 Score: {f1}")
