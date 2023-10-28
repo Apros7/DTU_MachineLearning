@@ -3,3 +3,9 @@
 
 1. Preliminary analysis of data
 2. Machine Learning on Data
+
+# Performance logging for Project 2
+
+## Regression problem: Predicting 
+| Type | Validation (final_test = False) | Test (final_test = True) |
+| NN | 53.509 | 53.252 |

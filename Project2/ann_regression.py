@@ -1,5 +1,5 @@
 import sys
-sys.path.append()
+sys.path.append("/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2")
 from automation import Tester
 
 import torch.nn as nn
@@ -20,21 +20,24 @@ class SimpleNN(nn.Module):
     def forward(self, x): return self.layers.forward(x)
 
 def eval_model(test_loader, model):
-    distances = []
-
     model.eval()
-    with torch.no_grad():
-        for i, (inputs, labels) in enumerate(test_loader):
-            outputs = model(inputs)
-            distances.append((outputs - labels)**2)
+    total_distance = 0
+    num_samples = 0
 
-    return sum(distances)/len(distances)
+    with torch.no_grad():
+        for inputs, labels in test_loader:
+            outputs = model(inputs)
+            batch_distance = ((outputs - labels)**2).sum()
+            total_distance += batch_distance
+            num_samples += len(labels)
+
+    return total_distance / num_samples
 
 def train_model(model, criterion, optimizer, train_loader, epochs):
     losses = []
     eval_loss = []
     model.train()
-    for epoch in tqdm(range(epochs)):
+    for epoch in range(epochs):
         for i, (inputs, labels) in enumerate(train_loader):
             optimizer.zero_grad() 
             outputs = model(inputs)
@@ -53,8 +56,8 @@ def test_nn_regression(x_train, x_test, y_train, y_test):
 
     input_size = 16
     output_size = 1
-    learning_rate = 2e-4
-    epochs = 500
+    learning_rate = 5e-5
+    epochs = 100
     batch_size = 32
     h = 200
 
@@ -69,9 +72,14 @@ def test_nn_regression(x_train, x_test, y_train, y_test):
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
 
     train_model(model, criterion, optimizer, train_loader, epochs)
-    return eval_model(model)
+    accuracy = eval_model(test_loader, model)
+
+    return accuracy
 
 
 path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10)
+
+# With final_test = False: the best is: 53.509
+# With final_test = True : the best is: 53.252
+tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = True, k = 10)
 
