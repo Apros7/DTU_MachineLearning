@@ -4,16 +4,16 @@
 1. Preliminary analysis of data
 2. Machine Learning on Data
 
-# Performance logging for Project 2
+## Performance logging for Project 2
 
-## Regression problem: Predicting Life Expectancy
+### Regression problem: Predicting Life Expectancy
 The error returned from your function to Tester should be the MSE
 
 | Type | Validation (final_test = False) | Test (final_test = True) |
 |------|---------------------------------|---------------------------|
 | NN | 53.509 | 53.252 |
 
-## Classification problem: Predicting Status
+### Classification problem: Predicting Status
 The error returned from your function to Tester should be the F1 (from sklean)
 
 | Type | Validation (final_test = False) | Test (final_test = True) |
