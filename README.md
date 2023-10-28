@@ -7,7 +7,15 @@
 # Performance logging for Project 2
 
 ## Regression problem: Predicting Life Expectancy
+The error returned from your function to Tester should be the MSE
 
 | Type | Validation (final_test = False) | Test (final_test = True) |
 |------|---------------------------------|---------------------------|
 | NN | 53.509 | 53.252 |
+
+## Classification problem: Predicting Status
+The error returned from your function to Tester should be the MSE
+
+| Type | Validation (final_test = False) | Test (final_test = True) |
+|------|---------------------------------|---------------------------|
+| x | x | x |
