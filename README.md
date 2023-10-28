@@ -14,7 +14,7 @@ The error returned from your function to Tester should be the MSE
 | NN | 53.509 | 53.252 |
 
 ## Classification problem: Predicting Status
-The error returned from your function to Tester should be the MSE
+The error returned from your function to Tester should be the F1 (from sklean)
 
 | Type | Validation (final_test = False) | Test (final_test = True) |
 |------|---------------------------------|---------------------------|
