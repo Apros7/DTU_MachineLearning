@@ -13,7 +13,9 @@ class SimpleNN(nn.Module):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(input_size, h),
-            nn.Tanh(),  
+            nn.ReLU(),  
+            nn.Linear(h, h),
+            nn.ReLU(),
             nn.Linear(h, output_size),
         )
 
@@ -26,9 +28,9 @@ def eval_model(test_loader, model):
 
     with torch.no_grad():
         for inputs, labels in test_loader:
-            outputs = model(inputs)
-            batch_distance = ((outputs - labels)**2).sum()
-            total_distance += batch_distance
+            outputs = model(inputs).squeeze()
+            batch_distance = (torch.square(outputs - labels)).sum()
+            total_distance += batch_distance 
             num_samples += len(labels)
 
     return total_distance / num_samples
@@ -56,10 +58,10 @@ def test_nn_regression(x_train, x_test, y_train, y_test):
 
     input_size = 16
     output_size = 1
-    learning_rate = 5e-5
-    epochs = 100
+    learning_rate = 1e-5
+    epochs = 200
     batch_size = 32
-    h = 200
+    h = 500
 
     model = SimpleNN(input_size, h, output_size)
     criterion = nn.MSELoss()
@@ -78,8 +80,5 @@ def test_nn_regression(x_train, x_test, y_train, y_test):
 
 
 path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-
-# With final_test = False: the best is: 53.509
-# With final_test = True : the best is: 53.252
-tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = True, k = 10)
+tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10)
 
