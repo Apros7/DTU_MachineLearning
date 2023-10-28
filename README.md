@@ -6,6 +6,8 @@
 
 # Performance logging for Project 2
 
-## Regression problem: Predicting 
+## Regression problem: Predicting Life Expectancy
+
 | Type | Validation (final_test = False) | Test (final_test = True) |
+|------|---------------------------------|---------------------------|
 | NN | 53.509 | 53.252 |
