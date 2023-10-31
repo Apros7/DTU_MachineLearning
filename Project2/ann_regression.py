@@ -59,9 +59,9 @@ def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
     input_size = 16
     output_size = 1
     learning_rate = 1e-5
-    epochs = 200
+    epochs = 10
     batch_size = 32
-    h = 200
+    h = 10
 
     model = SimpleNN(input_size, h, output_size)
     criterion = nn.MSELoss()
@@ -76,8 +76,9 @@ def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
     train_model(model, criterion, optimizer, train_loader, epochs)
     accuracy = eval_model(test_loader, model)
 
-    return accuracy
+    return accuracy, "k"
 
 
 path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
 tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10)
+print(tester.results)
