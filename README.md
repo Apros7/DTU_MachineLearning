@@ -11,7 +11,7 @@ The error returned from your function to Tester should be the MSE
 
 | Type | Validation (final_test = False) | Test (final_test = True) |
 |------|---------------------------------|---------------------------|
-| NN | 53.509 | 53.252 |
+| NN | 0.0888 | 0.0914 |
 
 ### Classification problem: Predicting Status
 The error returned from your function to Tester should be the F1 (from sklean)
