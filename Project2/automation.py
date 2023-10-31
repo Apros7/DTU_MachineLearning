@@ -52,7 +52,7 @@ class Tester():
     def _get_fold_combs_with_final_test(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+1:]), self.data_folds[i]) for i in range(self.k)] # (train, test)
     def _get_fold_combs(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+2:]), self.data_folds[i+1 if i+1 < self.k else 0], self.data_folds[i]) for i in range(self.k)] # (train, val, test)
     def _set_folds(self): self._set_data_folds(); self._get_fold_combs_with_final_test() if self.final_test else self._get_fold_combs()
-    def _get_generalization_error(self): print(f"Generalization (MSError) error is: {sum(self.results) / len(self.results)}")
+    def _get_generalization_error(self): self.error = sum(self.results) / len(self.results); print(f"Generalization (MSError) error is: {self.error}")
     def _test_all_folds(self): self.results = [self.func_to_test(self.data_x[fold[0]], self.data_x[fold[1]], self.data_y[fold[0]], self.data_y[fold[1]], self.func_var) for fold in tqdm(self.fold_combs, desc="Training and testing...")]
 
     def _set_life_expectancy(self): 
