@@ -7,6 +7,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 import torch
+import numpy as np
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, h, output_size) -> None:
@@ -14,8 +15,6 @@ class SimpleNN(nn.Module):
         self.layers = nn.Sequential(
             nn.Linear(input_size, h),
             nn.ReLU(),  
-            nn.Linear(h, h),
-            nn.ReLU(),
             nn.Linear(h, output_size),
         )
 
@@ -61,7 +60,7 @@ def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
     learning_rate = 1e-5
     epochs = 10
     batch_size = 32
-    h = 10
+    h = func_var
 
     model = SimpleNN(input_size, h, output_size)
     criterion = nn.MSELoss()
@@ -80,5 +79,8 @@ def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
 
 
 path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10)
-print(tester.results)
+h_to_test = np.array([0.1, 0.5, 1, 2, 5, 10, 20, 50, 100, 500]) * 10
+h_to_test = [int(func_var.item()) for func_var in h_to_test]
+# h_to_test = 8
+print(h_to_test)
+tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10, vars_to_test=h_to_test)

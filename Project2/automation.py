@@ -2,15 +2,14 @@
 """
 ## How to import:
 ```
-from automation import regression_tester, classification_tester
+from automation import Tester
 ```
 if you get a path error use:
 ```
 import sys
-sys.path.append()
-from automation import regression_tester, classification_tester
+sys.path.append(full_path_to_automation_path)
+from automation import Tester
 ```
-where the path should be your path, this is mine :-)
 
 ## How to use:
 You need to give it the following parameters:
@@ -21,10 +20,18 @@ your function has to take in: (X_train, X_test, Y_train, Y_test)
 
 Optional parameters:
 - k (default: 10)
-
 """
 
-# Automatically split data, reserve for for validation, run the function on all the folds, return minimum accuracy
+"""
+To do:
+- [x] Be able to do single level cross validation
+- [x] Be able to take in parameter input as list
+- [ ] Be able to do 2 level cross validation
+- [ ] When doing 2 level cross validation produce a table with outputs
+- [ ] Make it work for classification provlem
+"""
+
+# Automatically split data, reserve for validation, run the function on all the folds, return minimum accuracy
 # generalization error and best model object
 
 import pandas as pd
@@ -40,15 +47,14 @@ class Tester():
         function_to_test, 
         final_test : bool = False, 
         k : int = 10, 
-        function_variable = None,
-        print_info : bool = False,
+        vars_to_test = None,
         cross_validation_level : 1 or 2 = 1,
         ):
         avaliable_problem_types = ["LifeExpectancyRegression", "StatusClassification"]
         if problem_type not in avaliable_problem_types: raise ValueError(f"Problem type not in {avaliable_problem_types}")
         self.problem_function = {"LifeExpectancyRegression": self._set_life_expectancy, "StatusClassification": self._set_status_classification}
-        self.func_to_test, self.path_to_data, self.final_test, self.k = function_to_test, path_to_data, final_test, k
-        self.func_vars = list(function_variable) if function_variable is not None else [0] # else only 1 element, does not matter what
+        self.func_to_test, self.path_to_data, self.final_test, self.k, self.cv_lvl = function_to_test, path_to_data, final_test, k, cross_validation_level
+        self.func_vars = [vars_to_test] if type(vars_to_test) is not list else vars_to_test
         self.results = []
         self.problem_function[problem_type]()
 
@@ -57,16 +63,23 @@ class Tester():
     def _set_data_x(self, x_columns): self.data_x = torch.tensor([[x[index] for x in x_columns] for index in range(len(x_columns[0]))])
     def _set_data_y(self, y_column): self.data_y = torch.tensor(self.data[y_column].to_list())
     def _set_data_props(self, x_cols, y_col): self._set_data_x(x_cols); self._set_data_y(y_col)
-    def _set_data_folds(self): sublist_size = len(self.data) // self.k; self.data_folds = [list(range(len(self.data)))[i:i + sublist_size] for i in range(0, len(self.data), sublist_size)]
+    def _set_init_data_folds(self): sublist_size = len(self.data) // self.k; self.data_folds = [list(range(len(self.data)))[i:i + sublist_size] for i in range(0, len(self.data), sublist_size)]
     def _unnest_lst(self, lst): return [item for sublist in lst for item in sublist]
-    def _get_fold_combs_with_final_test(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+1:]), self.data_folds[i]) for i in range(self.k)] # (train, test)
-    def _get_fold_combs(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+2:]), self.data_folds[i+1 if i+1 < self.k else 0], self.data_folds[i]) for i in range(self.k)] # (train, val, test)
-    def _set_folds(self): self._set_data_folds(); self._get_fold_combs_with_final_test() if self.final_test else self._get_fold_combs()
-    def _print_generalization_table(self): pass
-    def _get_generalization_error(self): self.error = {func_var: sum(accuracies) / len(accuracies) for func_var, accuracies in zip(self.func_vars, self.accuracies)}
-    def _check_results(self): self.accuracies = [[r[0] for r in results] if type(results[0]) is list and len(results[0]) > 1 else results for results in self.results]
-    def _test_all_folds(self): self.results = [self.func_to_test(self.data_x[fold[0]], self.data_x[fold[1]], self.data_y[fold[0]], self.data_y[fold[1]], func_var) for fold in tqdm(self.fold_combs, desc="Training and testing...") for func_var in self.func_vars]
-    def _test_folds_and_save_error(self): self._test_all_folds(); self._check_results(); self._get_generalization_error()
+    def _get_fold_combs_without_val(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+1:]), self.data_folds[i]) for i in range(self.k)] # (train, test)
+    def _get_fold_combs_with_val(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+2:]), self.data_folds[i+1 if i+1 < self.k else 0], self.data_folds[i]) for i in range(self.k)] # (train, val, test)
+    def _set_folds(self): self._set_init_data_folds(); self._get_fold_combs_without_val() if self.final_test or self.cv_lvl == 2 else self._get_fold_combs_with_val()
+    def _print_best_performer(self): print("".join(["-"]*40), f"\nBest performer is: {min(self.error.keys(), key=lambda x: self.error[x])}\n", sep="\n")
+    def _print_generalization_table(self): print("Func var: |   Generalization error", "".join(["-"]*40), *[f"{k}   \t|    {v}" for k, v in self.error.items()], sep="\n"); self._print_best_performer()
+    def _display(self): self._print_generalization_table() if len(self.error) > 1 else print("Generalization error is: ", list(self.error.values())[0])
+    def _get_generalization_error(self): self.error = {k: sum(v) / len(v) for k, v in self.accuracies.items()}
+    def _fix_results(self): self.accuracies = {k: self._check_results(v) for k, v in self.results.items()}
+    def _check_results(self, results): return [float(r[0]) if type(r) in [list, tuple] and len(r) > 1 else r for r in results]
+    def _test_folds_and_save_error(self): self._test_all_folds(); self._fix_results(); self._get_generalization_error(); self._display()
+    def _test_all_folds(self): 
+        self.results = {}
+        for func_var in tqdm(self.func_vars, desc=f"Training and testing all function variables for {self.k} folds..."):
+            self.results[func_var] = [self.func_to_test(self.data_x[fold[0]], self.data_x[fold[1]], self.data_y[fold[0]], self.data_y[fold[1]], func_var) for fold in self.fold_combs]
+        return self.results
 
     def _set_life_expectancy(self): 
         # Still need to implement printing table and 2-level cross validation
@@ -75,7 +88,8 @@ class Tester():
         y_col = "Life expectancy "
         self._set_data_props(x_cols, y_col)
         self._set_folds()
-        self._test_folds_and_save_error()
+        if self.cv_lvl == 1: self._test_folds_and_save_error()
+        else: pass
 
     def _set_status_classification(self): # not done
         x_cols = []
