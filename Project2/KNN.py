@@ -52,17 +52,18 @@ for c in range(C):
     class_mask = (y_est==c)
     plt.plot(X_test[class_mask,2], X_test[class_mask,3], styles[c], markersize=8)
     plt.plot(X_test[class_mask,2], X_test[class_mask,3], 'kx', markersize=7)
-plt.title('Data classification - KNN');
+plt.title('Data classification - KNN')
 
 # Compute and plot confusion matrix
-cm = confusion_matrix(y_test, y_est);
-accuracy = 100*cm.diagonal().sum()/cm.sum(); error_rate = 100-accuracy;
+cm = confusion_matrix(y_test, y_est)
+accuracy = 100*cm.diagonal().sum()/cm.sum(); error_rate = 100-accuracy
 plt.figure(2)
-plt.imshow(cm, cmap='binary', interpolation='None');
+plt.imshow(cm, cmap='binary', interpolation='None')
 plt.colorbar()
-plt.xticks(range(C)); plt.yticks(range(C));
-plt.xlabel('Predicted class'); plt.ylabel('Actual class');
-plt.title('Confusion matrix (Accuracy: {0}%, Error Rate: {1}%)'.format(accuracy, error_rate));
+plt.xticks(range(C)); plt.yticks(range(C))
+plt.xlabel('Predicted class'); plt.ylabel('Actual class')
+plt.title('Confusion matrix (Accuracy: {0}%, Error Rate: {1}%)'.format(accuracy, error_rate))
+# plt.title(f'Confusion matrix (Accuracy: {accuracy}%, Error Rate: {error_rate}%)')
 
 plt.show()
 
