@@ -10,8 +10,8 @@ Your function should have the following attributes for regression:
 To do:
 - [x] Be able to do single level cross validation
 - [x] Be able to take in parameter input as list
-- [ ] Be able to do 2 level cross validation
-- [ ] When doing 2 level cross validation produce a table with outputs
+- [x] Be able to do 2 level cross validation
+- [x] When doing 2 level cross validation produce a table with outputs
 - [ ] Make it work for classification provlem
 """
 
