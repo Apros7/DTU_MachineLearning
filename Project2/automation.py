@@ -1,25 +1,9 @@
 
 """
-## How to import:
-```
-from automation import Tester
-```
-if you get a path error use:
-```
-import sys
-sys.path.append(full_path_to_automation_path)
-from automation import Tester
-```
-
-## How to use:
-You need to give it the following parameters:
-- your function (explained below)
-- final_test (when you are doing the final test, set this to True to use validation, else set to False)
-
-your function has to take in: (X_train, X_test, Y_train, Y_test)
-
-Optional parameters:
-- k (default: 10)
+Your function should have the following attributes for regression:
+- Input should be: x_train, x_test, y_train, y_test, func_var
+- Output 1 element, which is the MSE. 
+    If multiple, return as tuple. First element should be MSE. The other elements can be found using tester.results
 """
 
 """
