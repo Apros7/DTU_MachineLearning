@@ -79,12 +79,13 @@ class Tester():
     def _print_table(self, columns, data):
         table = PrettyTable()
         table.field_names = ["Fold"] + columns
-
-        for i in range(10):
-            row_data = [f"{i+1}"] + data[i]
-            table.add_row(row_data)
-
+        for i in range(10): row_data = [f"{i+1}"] + data[i]; table.add_row(row_data)
         print(table)
+
+    def _get_best_param(self, func, vars_to_test, fold_train_x, fold_train_y):
+        return Tester(problem_type=self.problem_type, path_to_data=self.path_to_data, function_to_test=func,
+                final_test=True, vars_to_test=vars_to_test, display_info = False, _predetermined_data = True, _data_x = fold_train_x, 
+                _data_y = fold_train_y, _active_tqdm = False).best_performer
 
     def _two_level_cross_validation(self):
         all_results = []
@@ -93,9 +94,7 @@ class Tester():
             results_this_fold = []
             fold_train_x, fold_train_y, fold_test_x, fold_test_y = self.data_x[fold_train_indexes], self.data_y[fold_train_indexes], self.data_x[fold_test_indexes], self.data_y[fold_test_indexes]
             for func, vars_to_test in zip(self.func_to_test, self.func_vars):
-                best_parameter, best_gen_val_loss = Tester(problem_type=self.problem_type, path_to_data=self.path_to_data, function_to_test=func,
-                final_test=True, vars_to_test=vars_to_test, display_info = False, _predetermined_data = True, _data_x = fold_train_x, 
-                _data_y = fold_train_y, _active_tqdm = False).best_performer
+                best_parameter, best_gen_val_loss = self._get_best_param(func, vars_to_test, fold_train_x, fold_train_y)
                 test_error = func(fold_train_x, fold_test_x, fold_train_y, fold_test_y, best_parameter)
                 results_this_fold.extend([" ", best_parameter, round(test_error, 6), round(best_gen_val_loss, 6)])
             all_results.append(results_this_fold)
