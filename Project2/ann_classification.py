@@ -58,7 +58,7 @@ def ann(x_train, x_test, y_train, y_test, func_var):
     input_size = 16
     output_size = 1
     learning_rate = 1e-5
-    epochs = 50
+    epochs = 100
     batch_size = 32
     h = func_var
 

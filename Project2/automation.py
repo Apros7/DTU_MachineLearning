@@ -4,6 +4,10 @@ Your function should have the following attributes for regression:
 - Input should be: x_train, x_test, y_train, y_test, func_var
 - Output 1 element, which is the MSE. 
     If multiple, return as tuple. First element should be MSE. The other elements can be found using tester.results
+
+Your function should have the following attributes for classification:
+- Input should be: x_train, x_test, y_train, y_test, func_var
+- Output 1 element, which is the a list with all the predictions for y_test
 """
 
 """
@@ -102,7 +106,6 @@ class Tester():
             
 
     def _set_life_expectancy(self): 
-        # Still need to implement printing table and 2-level cross validation
         if not self._predetermined_data: 
             self._load_data()
             x_cols = [self.data[column].to_list() for column in [self.columns[3]] + self.columns[5:]]
