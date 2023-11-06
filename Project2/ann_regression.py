@@ -14,7 +14,7 @@ class SimpleNN(nn.Module):
         super().__init__()
         self.layers = nn.Sequential(
             nn.Linear(input_size, h),
-            nn.ReLU(),  
+            nn.ReLU(),
             nn.Linear(h, output_size),
         )
 
