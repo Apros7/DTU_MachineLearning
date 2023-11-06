@@ -53,7 +53,7 @@ def train_model(model, criterion, optimizer, train_loader, epochs):
     # plt.plot(range(0, len(eval_loss) * len(train_loader), len(train_loader)), eval_loss, label = "eval loss")
     # plt.show()
 
-def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
+def ann(x_train, x_test, y_train, y_test, func_var):
 
     input_size = 16
     output_size = 1
@@ -75,12 +75,12 @@ def test_nn_regression(x_train, x_test, y_train, y_test, func_var):
     train_model(model, criterion, optimizer, train_loader, epochs)
     accuracy = eval_model(test_loader, model)
 
-    return accuracy, "k"
+    return float(accuracy)
 
-
-path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-h_to_test = np.array([0.1, 0.5, 1, 2, 5, 10, 20, 50, 100, 500]) * 10
-h_to_test = [int(func_var.item()) for func_var in h_to_test]
-# h_to_test = 8
-print(h_to_test)
-tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = test_nn_regression, final_test = False, k = 10, vars_to_test=h_to_test)
+if __name__ == "__main__":
+    path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
+    h_to_test = np.array([0.1, 0.5, 1, 2, 5, 10, 20, 50, 100, 500]) * 10
+    h_to_test = [int(func_var.item()) for func_var in h_to_test]
+    # h_to_test = 8
+    print(h_to_test)
+    tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = ann, final_test = False, k = 10, vars_to_test=h_to_test)
