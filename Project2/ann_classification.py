@@ -16,27 +16,31 @@ class SimpleNN(nn.Module):
             nn.Linear(input_size, h),
             nn.ReLU(),  
             nn.Linear(h, output_size),
+            nn.Sigmoid(),
         )
 
     def forward(self, x): return self.layers.forward(x)
 
-def eval_model(test_loader, model):
+# def eval_model(test_loader, model):
+#     model.eval()
+#     total_distance = 0
+#     num_samples = 0
+
+#     with torch.no_grad():
+#         for inputs, labels in test_loader:
+#             outputs = model(inputs).squeeze()
+#             batch_distance = (torch.square(outputs - labels)).sum()
+#             total_distance += batch_distance 
+#             num_samples += len(labels)
+
+#     return total_distance / num_samples
+
+def get_predictions(test_x, model):
     model.eval()
-    total_distance = 0
-    num_samples = 0
-
     with torch.no_grad():
-        for inputs, labels in test_loader:
-            outputs = model(inputs).squeeze()
-            batch_distance = (torch.square(outputs - labels)).sum()
-            total_distance += batch_distance 
-            num_samples += len(labels)
-
-    return total_distance / num_samples
+        return model(test_x)
 
 def train_model(model, criterion, optimizer, train_loader, epochs):
-    losses = []
-    eval_loss = []
     model.train()
     for epoch in range(epochs):
         for i, (inputs, labels) in enumerate(train_loader):
@@ -46,41 +50,32 @@ def train_model(model, criterion, optimizer, train_loader, epochs):
             loss = criterion(outputs, labels) 
             loss.backward()
             optimizer.step()
-            # losses.append(abs(loss.item()))
-        # eval_loss.append(eval_model(model))
-
-    # plt.plot(range(len(losses)), losses, label = "loss")
-    # plt.plot(range(0, len(eval_loss) * len(train_loader), len(train_loader)), eval_loss, label = "eval loss")
-    # plt.show()
 
 def ann(x_train, x_test, y_train, y_test, func_var):
 
     input_size = 16
-    output_size = 1
+    # binary for status
+    output_size = 2
     learning_rate = 1e-5
     epochs = 50
     batch_size = 32
     h = func_var
 
     model = SimpleNN(input_size, h, output_size)
-    criterion = nn.MSELoss()
+    criterion = nn.BCELoss
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     train_dataset = TensorDataset(x_train, y_train)
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-    test_dataset = TensorDataset(x_test, y_test)
-    test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-
     train_model(model, criterion, optimizer, train_loader, epochs)
-    accuracy = eval_model(test_loader, model)
+    raw_predictions = get_predictions(x_test, model)
 
-    return float(accuracy)
+    return raw_predictions
 
 if __name__ == "__main__":
     path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-    h_to_test = np.array([0.1, 0.5, 1, 2, 5, 10, 20, 50, 100, 500]) * 10
-    h_to_test = [int(func_var.item()) for func_var in h_to_test]
+    h_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
     # h_to_test = 8
     print(h_to_test)
-    tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = ann, final_test = False, k = 10, vars_to_test=h_to_test)
+    tester = Tester("StatusClassification", path_to_data, function_to_test = ann, final_test = False, k = 10, vars_to_test=h_to_test)

@@ -16,7 +16,8 @@ To do:
 - [x] Be able to take in parameter input as list
 - [x] Be able to do 2 level cross validation
 - [x] When doing 2 level cross validation produce a table with outputs
-- [ ] Make it work for classification provlem
+- [ ] Make it work for classification problem 1
+- [ ] Make it work for classification problem 2
 """
 
 # Automatically split data, reserve for validation, run the function on all the folds, return minimum accuracy
@@ -72,7 +73,7 @@ class Tester():
     def _get_generalization_error(self): self.error = {k: sum(v) / len(v) for k, v in self.accuracies.items()}
     def _fix_results(self): self.accuracies = {k: self._check_results(v) for k, v in self.results.items()}
     def _check_results(self, results): return [float(r[0]) if type(r) in [list, tuple] and len(r) > 1 else r for r in results]
-    def _test_folds_and_save_error(self): self._test_all_folds(); self._fix_results(); self._get_generalization_error(); self._set_best_performer(); self._display() if self.display_info else None
+    def _test_folds_and_save_error_regression(self): self._test_all_folds(); self._fix_results(); self._get_generalization_error(); self._set_best_performer(); self._display() if self.display_info else None
     def _test_all_folds(self): 
         self.results = {}
         progress_bar = tqdm(self.func_vars, desc=f"Training and testing all function variables for {self.k} folds...") if self._active_tqdm else self.func_vars
@@ -91,7 +92,7 @@ class Tester():
                 final_test=True, vars_to_test=vars_to_test, display_info = False, _predetermined_data = True, _data_x = fold_train_x, 
                 _data_y = fold_train_y, _active_tqdm = False).best_performer
 
-    def _two_level_cross_validation(self):
+    def _two_level_cross_validation_regression(self):
         all_results = []
         columns = [v for lst in [[func.__name__, f"Best Param {i}", f"Test Error {i}", f"Val Gen Error {i}"] for i, func in enumerate(self.func_to_test)] for v in lst]
         for fold_train_indexes, fold_test_indexes in tqdm(self.fold_combs, desc="Testing all functions with all parameters on each fold. Please wait..."):
@@ -103,6 +104,8 @@ class Tester():
                 results_this_fold.extend([" ", best_parameter, round(test_error, 6), round(best_gen_val_loss, 6)])
             all_results.append(results_this_fold)
         self._print_table(columns, all_results)
+
+    def _test_folds_and_save_error_classification(self): self._test_all_folds(); self._fix_results(); print(self.results)
             
 
     def _set_life_expectancy(self): 
@@ -113,10 +116,17 @@ class Tester():
             self._set_data_props(x_cols, y_col)
         if self.cv_lvl == 2: self.final_test = True
         self._set_folds()
-        if self.cv_lvl == 1: self._test_folds_and_save_error()
-        if self.cv_lvl == 2: self._two_level_cross_validation()
-        else: pass
+        if self.cv_lvl == 1: self._test_folds_and_save_error_regression()
+        if self.cv_lvl == 2: self._two_level_cross_validation_regression()
 
     def _set_status_classification(self): # not done
-        x_cols = []
-        y_col = ""
+        if not self._predetermined_data:
+            self._load_data()
+            x_cols = [self.data[column].to_list() for column in self.columns[4:]]
+            y_col = "Status"
+            self._set_data_props(x_cols, y_col)
+            # convert y_col to list with one hot encoding
+        if self.cv_lvl == 2: self.final_test = True
+        self._set_folds()
+        if self.cv_lvl == 1: self._test_folds_and_save_error_classification()
+        if self.cv_lvl == 2: pass #self._two_level_cross_validation_classification()
