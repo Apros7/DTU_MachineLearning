@@ -1,9 +1,15 @@
-from ann_regression import ann
-from linear_working import linear
-from linear_baseline import baseline
+from ann_classification import ann
+from KNN_tester import KNN
+from classfication_baseline import baseline
+
+from LogisticRegressionTester import LogReg
+from ClassificationTreeTester import ClassTree
+
 from automation import Tester
 
-functions_to_compare = [ann, linear, baseline]
+functions_to_compare = [ann, KNN, baseline]
+functions_to_compare = [LogReg, ClassTree, baseline]
+
 nn_vars_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
 linear_regression_vars_to_test = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
 
