@@ -79,7 +79,7 @@ def ann(x_train, x_test, y_train, y_test, func_var):
 
 if __name__ == "__main__":
     path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-    h_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    h_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
     # h_to_test = 8
     print(h_to_test)
     tester = Tester("StatusClassification", path_to_data, function_to_test = ann, final_test = False, k = 10, vars_to_test=h_to_test)
