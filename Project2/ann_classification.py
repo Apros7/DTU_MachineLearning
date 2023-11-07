@@ -9,6 +9,7 @@ from tqdm import tqdm
 import torch
 import numpy as np
 from sklearn.metrics import f1_score
+import matplotlib.pyplot as plt
 
 class SimpleNN(nn.Module):
     def __init__(self, input_size, h, output_size) -> None:
@@ -42,6 +43,7 @@ def get_predictions(test_x, model):
         return model(test_x)
 
 def train_model(model, criterion, optimizer, train_loader, epochs):
+    losses = []
     model.train()
     for epoch in range(epochs):
         for i, (inputs, labels) in enumerate(train_loader):
@@ -52,6 +54,10 @@ def train_model(model, criterion, optimizer, train_loader, epochs):
             loss = criterion(outputs, labels.float()) 
             loss.backward()
             optimizer.step()
+            losses.append(loss.item())
+    # plt.plot(losses)
+    # plt.show()
+
 
 def ann(x_train, x_test, y_train, y_test, func_var):
 
@@ -74,12 +80,13 @@ def ann(x_train, x_test, y_train, y_test, func_var):
     raw_predictions = get_predictions(x_test, model)
     predictions = np.argmax(raw_predictions, axis=1)
     y_test = np.argmax(y_test, axis=1)
+    print("done")
 
     return f1_score(predictions, y_test)
 
 if __name__ == "__main__":
     path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-    h_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
-    # h_to_test = 8
-    print(h_to_test)
-    tester = Tester("StatusClassification", path_to_data, function_to_test = ann, final_test = False, k = 10, vars_to_test=h_to_test)
+    # h_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
+    h_to_test = 2048
+    # print(h_to_test)
+    tester = Tester("StatusClassification", path_to_data, function_to_test = ann, final_test = True, k = 10, vars_to_test=h_to_test)
