@@ -6,18 +6,21 @@ from LogisticRegressionTester import LogReg
 from ClassificationTreeTester import ClassTree
 
 from automation import Tester
+import numpy as np
 
-functions_to_compare = [ann, KNN, baseline]
-functions_to_compare = [LogReg, ClassTree, baseline]
+functions_to_compare1 = [ann, KNN, baseline]
+functions_to_compare2 = [LogReg, ClassTree, baseline]
 
 nn_vars_to_test = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048]
-linear_regression_vars_to_test = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+ks_to_test = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+lambda_to_test = np.power(10.,range(-30,30))
+lambda_to_test = [float(x) for x in lambda_to_test]
+classTree_to_test = ["gini", "entropy", "log_loss"]
+baseline_to_test = ['micro', 'macro', 'weighted', 'samples']
 
-# nn_vars_to_test = [1, 2]
-# linear_regression_vars_to_test = [0.1, 1]
-
-all_vars_to_test = [nn_vars_to_test, linear_regression_vars_to_test, [0]]
+all_vars_to_test1 = [nn_vars_to_test, ks_to_test, baseline_to_test]
+all_vars_to_test2 = [lambda_to_test, classTree_to_test, baseline_to_test]
 
 path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
-tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = functions_to_compare, final_test = False, 
-                k = 10, cross_validation_level = 2, vars_to_test=all_vars_to_test)
+tester = Tester("StatusClassification", path_to_data, function_to_test = functions_to_compare2, final_test = False, 
+                k = 10, cross_validation_level = 2, vars_to_test=all_vars_to_test2)

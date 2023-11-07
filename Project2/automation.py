@@ -126,7 +126,7 @@ class Tester():
             x_cols = [self.data[column].to_list() for column in self.columns[4:]]
             y_col = "Status"
             self._set_data_props(x_cols, y_col)
-            self._one_hot_y_col()
+            self._one_hot_y_col()   
         if self.cv_lvl == 2: self.final_test = True
         self._set_folds()
         if self.cv_lvl == 1: self._test_folds_and_save_error()
