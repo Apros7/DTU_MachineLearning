@@ -39,16 +39,26 @@ if __name__ == "__main__":
 
     lambda_to_test = 1
 
-    path_to_data = "/Users/lucasvilsen/Desktop/DTU/MachineLearning&DataMining/Project2/StandardizedDataFrameWithNansFilled.csv"
+    path_to_data = "/Users/william/Documents/University/civil engineering year 4/Semester 1 DTU/Introduction to machine learning/DTU_MachineLearning/Project2/StandardizedDataFrameWithNansFilled.csv"
 
     tester = Tester("LifeExpectancyRegression", path_to_data, function_to_test = linear_regression_with_W, final_test = False, k = 10, vars_to_test=lambda_to_test)
     W = list(tester.results.values())[0][0][1]
-    # print(W)
     x_cols = [tester.columns[3]] + tester.columns[5:]
-    print(*[(w, x_col) for w, x_col in zip(W, x_cols)], sep="\n")
-    # print(len(W), len(x_cols))
 
-    # GRAF FOR WILL: UNCOMMENT
-    # plt.semilogx(tester.error.keys(), tester.error.values())
-    # plt.show()
+    weights_values = [(w, x_col) for w, x_col in zip(W, x_cols)]
 
+    categories = [item[1] for item in weights_values]
+    values = [item[0] for item in weights_values]
+
+    plt.figure(figsize=(15, 9))
+    plt.subplots_adjust(bottom=0.35)
+    plt.bar(categories, values)
+    plt.xlabel("Categories")
+    plt.xticks(rotation='vertical')
+    plt.ylabel("Weight")
+    plt.title("Linear Regression Coefficients")
+    plt.savefig("Linear Coefficients.png", bbox_inches = "tight")
+    plt.show()
+
+
+  
