@@ -66,7 +66,7 @@ class Tester():
     def _get_fold_combs_without_val(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+1:]), self.data_folds[i]) for i in range(self.k)] # (train, test)
     def _get_fold_combs_with_val(self): self.fold_combs = [(self._unnest_lst(self.data_folds[:i] + self.data_folds[i+2:]), self.data_folds[i+1 if i+1 < self.k else 0], self.data_folds[i]) for i in range(self.k)] # (train, val, test)
     def _set_folds(self): self._set_init_data_folds(); self._get_fold_combs_without_val() if self.final_test else self._get_fold_combs_with_val()
-    def _set_best_performer(self): self.best_performer = (min(self.error.keys(), key=lambda x: self.error[x]), min(self.error.values()))
+    def _set_best_performer(self): self.best_performer = (self.best_param_func(self.error.keys(), key=lambda x: self.error[x]), self.best_param_func(self.error.values()))
     def _print_best_performer(self): print("".join(["-"]*40), f"\nBest performer is: {self.best_performer[0]}\n", sep="\n")
     def _print_generalization_table(self): print("Func var: |   Generalization error", "".join(["-"]*40), *[f"{k}   \t|    {v}" for k, v in self.error.items()], sep="\n"); self._print_best_performer()
     def _display(self): self._print_generalization_table() if len(self.error) > 1 else print("Generalization error is: ", list(self.error.values())[0])
@@ -108,6 +108,7 @@ class Tester():
     def _one_hot_y_col(self): self.data_y = torch.nn.functional.one_hot(self.data_y)
 
     def _set_life_expectancy(self): 
+        self.best_param_func = min
         if not self._predetermined_data: 
             self._load_data()
             x_cols = [self.data[column].to_list() for column in [self.columns[3]] + self.columns[5:]]
@@ -118,7 +119,8 @@ class Tester():
         if self.cv_lvl == 1: self._test_folds_and_save_error()
         if self.cv_lvl == 2: self._two_level_cross_validation()
 
-    def _set_status_classification(self): # not done
+    def _set_status_classification(self):
+        self.best_param_func = max
         if not self._predetermined_data:
             self._load_data()
             x_cols = [self.data[column].to_list() for column in self.columns[4:]]
