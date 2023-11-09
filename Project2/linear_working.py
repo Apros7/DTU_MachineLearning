@@ -53,10 +53,9 @@ if __name__ == "__main__":
     plt.figure(figsize=(15, 9))
     plt.subplots_adjust(bottom=0.35)
     plt.bar(categories, values)
-    plt.xlabel("Categories")
     plt.xticks(rotation='vertical')
-    plt.ylabel("Weight")
-    plt.title("Linear Regression Coefficients")
+    plt.ylabel("Weight", fontsize=20)
+    plt.title("Linear Regression Coefficients", fontsize=20)
     plt.savefig("Linear Coefficients.png", bbox_inches = "tight")
     plt.show()
 
