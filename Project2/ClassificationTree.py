@@ -13,7 +13,8 @@ y=y.T
 X = data.loc[:, 'Adult Mortality':'Schooling'].values
 attributeNames = data.columns[1:-1].tolist()
 
-criterion='gini'
+# classTree_to_test = ["gini", "entropy", "log_loss"]
+criterion='entropy'
 dtc = tree.DecisionTreeClassifier(criterion=criterion, min_samples_split=100)
 dtc = dtc.fit(X,y)
 
